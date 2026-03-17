@@ -6,18 +6,22 @@
   <title>🍀 香草AI 賽博後宮</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body {margin:0; background:#0a0a14; color:#ff79c6; font-family: system-ui;}
-    #app {max-width:420px; margin:auto; height:100vh; display:flex; flex-direction:column;}
-    header {background:#1a1a2e; padding:12px; text-align:center; font-size:1.4em; border-bottom:2px solid #ff4d94;}
-    #status {background:#16213e; padding:12px; margin:8px; border-radius:12px; font-size:0.95em;}
-    .stat {margin:6px 0; display:flex; justify-content:space-between;}
-    #chat {flex:1; overflow-y:auto; padding:12px; background:#111827;}
-    .msg {max-width:80%; padding:12px 16px; border-radius:18px; margin:8px 0;}
-    .user {background:#7b5eff; margin-left:auto; color:white;}
-    .ai {background:#2a2a4a;}
-    #input-area {padding:12px; background:#1a1a2e; display:flex; gap:8px;}
-    #input {flex:1; padding:14px; border-radius:30px; border:none; background:#222; color:white;}
-    button {padding:14px 24px; background:#ff4d94; border:none; border-radius:30px; color:white; font-weight:bold;}
+    body { margin:0; background:#0a0a14; color:#ff79c6; font-family: system-ui, sans-serif; }
+    #app { max-width:420px; margin:auto; height:100vh; display:flex; flex-direction:column; }
+    header { background:#1a1a2e; padding:12px; text-align:center; font-size:1.5em; border-bottom:3px solid #ff4d94; }
+    #status { background:#16213e; padding:12px; margin:8px; border-radius:12px; display:flex; gap:12px; }
+    #avatar { width:80px; height:80px; border-radius:12px; object-fit:cover; background:#2a2a4a; }
+    .stat-container { flex:1; font-size:0.95em; }
+    .stat { margin:4px 0; display:flex; justify-content:space-between; }
+    #chat { flex:1; overflow-y:auto; padding:12px; background:#111827; }
+    .msg { max-width:80%; padding:12px 16px; border-radius:18px; margin:8px 0; word-break:break-word; }
+    .user { background:#7b5eff; margin-left:auto; color:white; }
+    .ai { background:#2a2a4a; align-self:flex-start; }
+    #input-area { padding:12px; background:#1a1a2e; display:flex; gap:8px; }
+    #input { flex:1; padding:14px 16px; border-radius:30px; border:none; background:#222; color:white; font-size:1em; }
+    button { padding:14px 24px; background:#ff4d94; border:none; border-radius:30px; color:white; font-weight:bold; cursor:pointer; }
+    .switch-btn { text-align:center; margin:10px; }
+    .switch-btn button { padding:10px 30px; background:#7b5eff; border-radius:20px; }
   </style>
 </head>
 <body>
@@ -25,11 +29,18 @@
   <header>🍀 香草AI 賽博後宮</header>
   
   <div id="status">
-    <div class="stat">当前角色：<strong id="role-name">小樱（傲娇女仆）</strong></div>
-    <div class="stat">好感度：<span id="aff">68</span>/100 ❤️</div>
-    <div class="stat">隐秘欲望：<span id="desire">轻微发情</span></div>
-    <div class="stat">当前心情：<span id="mood">害羞期待</span></div>
-    <div class="stat">穿着：<span id="clothes">女仆装·裙摆微湿</span></div>
+    <img id="avatar" src="https://via.placeholder.com/80/2a2a4a/fff?text=角色" alt="角色头像">
+    <div class="stat-container">
+      <div class="stat"><span>当前角色：</span><strong id="role-name">小樱（傲娇女仆）</strong></div>
+      <div class="stat"><span>好感度：</span><span id="aff">68</span>/100 ❤️</div>
+      <div class="stat"><span>隐秘欲望：</span><span id="desire">轻微发情</span></div>
+      <div class="stat"><span>当前心情：</span><span id="mood">害羞期待</span></div>
+      <div class="stat"><span>穿着：</span><span id="clothes">女仆装·裙摆微湿</span></div>
+    </div>
+  </div>
+
+  <div class="switch-btn">
+    <button onclick="showRoleMenu()">后宫切换 · 选老婆</button>
   </div>
 
   <div id="chat"></div>
@@ -45,8 +56,72 @@ Telegram.WebApp.ready();
 Telegram.WebApp.expand();
 
 let aff = 68;
-let currentRole = "小樱（傲娇女仆）";
+let desireLevel = 1;
+let currentRoleIndex = 0;
+
+const roles = [
+  {
+    name: "小樱（傲娇女仆）",
+    avatar: "https://via.placeholder.com/80/ff79c6/000?text=小樱",
+    initialAff: 68,
+    replies: [
+      "哼，才不是因为你这样说就湿了呢！笨蛋主人♡",
+      "……主人，再多说点羞人的话试试……人家会忍不住的",
+      "呜呜……裙子都湿透了……都是你的错，快负责♡",
+      "别停……继续调教小樱吧……人家下面好痒……",
+      "主人好坏……小樱要高潮了……啊啊♡"
+    ]
+  },
+  {
+    name: "玲儿（病娇学妹）",
+    avatar: "https://via.placeholder.com/80/7b5eff/fff?text=玲儿",
+    initialAff: 45,
+    replies: [
+      "哥哥只准看玲儿一个人哦……不然玲儿会生气呢~",
+      "嘻嘻……哥哥的味道好香……玲儿想一直贴着你",
+      "哥哥……玲儿下面好湿……快来安慰玲儿♡",
+      "如果哥哥不理玲儿……玲儿就……把你锁起来",
+      "哥哥……玲儿要你现在就进来……不然玲儿哭给你看"
+    ]
+  },
+  {
+    name: "女王大人（冷艳女王）",
+    avatar: "https://via.placeholder.com/80/ff4d94/000?text=女王",
+    initialAff: 30,
+    replies: [
+      "跪下，奴隶。敢直视本女王？",
+      "哼，表现不错……赏你舔本女王的脚♡",
+      "再不听话，就把你关笼子里调教",
+      "乞求吧……女王心情好时会让你高潮",
+      "奴隶……你的那里已经硬了……快服侍本女王"
+    ]
+  }
+];
+
+let currentRole = roles[currentRoleIndex];
+aff = currentRole.initialAff;
+
 const chat = document.getElementById('chat');
+const roleNameEl = document.getElementById('role-name');
+const avatarEl = document.getElementById('avatar');
+
+function updateRoleDisplay() {
+  roleNameEl.textContent = currentRole.name;
+  avatarEl.src = currentRole.avatar;
+  updateStatus();
+}
+
+function updateStatus() {
+  aff = Math.min(100, aff + Math.floor(Math.random() * 15 + 5));
+  desireLevel = Math.min(4, Math.floor(aff / 25) + 1);
+
+  document.getElementById('aff').textContent = aff;
+  const desires = ["无感", "轻微发情（脸红心跳）", "中度渴望（下面湿了）", "强烈湿润（忍不住求饶）"];
+  document.getElementById('desire').textContent = desires[desireLevel - 1];
+  document.getElementById('mood').textContent = aff > 80 ? "完全沉沦♡" : "害羞期待";
+  const clothes = ["完整制服", "裙摆微湿", "衣衫凌乱（半解）", "几乎全裸（跪地求欢）"];
+  document.getElementById('clothes').textContent = clothes[desireLevel - 1];
+}
 
 function addMsg(text, who) {
   const div = document.createElement('div');
@@ -56,35 +131,43 @@ function addMsg(text, who) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-function updateStatus() {
-  aff = Math.min(100, aff + Math.floor(Math.random() * 12 + 5));
-  document.getElementById('aff').textContent = aff;
-  document.getElementById('desire').textContent = aff > 80 ? "极度渴望（全身湿透）" : "轻微发情";
-  document.getElementById('mood').textContent = "娇喘期待";
-  document.getElementById('clothes').textContent = "女仆装·裙摆湿透";
-}
-
 function sendMsg() {
-  const input = document.getElementById('input').value.trim();
-  if (!input) return;
-  addMsg(input, 'user');
-  document.getElementById('input').value = '';
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text) return;
+  addMsg(text, 'user');
+  input.value = '';
 
   setTimeout(() => {
-    const replies = [
-      "哼，才不是因为你这样说就心动了呢！笨蛋主人♡",
-      "……再、再多说点那种话……人家要忍不住了",
-      "呜呜……裙子都湿透了……快负责啊！",
-      "主人……你好坏……小樱下面都……（脸红）"
-    ];
-    addMsg(replies[Math.floor(Math.random()*replies.length)], 'ai');
+    const reply = currentRole.replies[Math.floor(Math.random() * currentRole.replies.length)];
+    addMsg(reply, 'ai');
     updateStatus();
-    Telegram.WebApp.HapticFeedback.impactOccurred('heavy'); // 原版那种震动反馈
-  }, 800);
+    Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
+  }, 900);
 }
 
-// 开场白（和原版一样甜+色）
-addMsg("主人～终于来找小樱了呢……今天想怎么欺负人家呀？♡", 'ai');
+function showRoleMenu() {
+  const buttons = roles.map((r, i) => ({id: i.toString(), type: 'default', text: r.name}));
+  buttons.push({id: 'cancel', type: 'close', text: '取消'});
+
+  Telegram.WebApp.showPopup({
+    title: '你的赛博后宫',
+    message: '选择一位老婆来调教吧♡',
+    buttons: buttons
+  }, (btnId) => {
+    if (btnId === 'cancel' || !btnId) return;
+    currentRoleIndex = parseInt(btnId);
+    currentRole = roles[currentRoleIndex];
+    aff = currentRole.initialAff;
+    chat.innerHTML = '';
+    addMsg(`主人～现在切换到${currentRole.name.split('（')[0]}了……来玩弄人家吧♡`, 'ai');
+    updateRoleDisplay();
+  });
+}
+
+// 初始化
+updateRoleDisplay();
+addMsg(`主人～终于来找${currentRole.name.split('（')[0]}了呢……今天想怎么欺负/宠爱人家呀？♡`, 'ai');
 </script>
 </body>
 </html>
