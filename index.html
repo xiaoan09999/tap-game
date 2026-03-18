@@ -1,173 +1,229 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>🍀 香草AI 賽博後宮</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body { margin:0; background:#0a0a14; color:#ff79c6; font-family: system-ui, sans-serif; }
-    #app { max-width:420px; margin:auto; height:100vh; display:flex; flex-direction:column; }
-    header { background:#1a1a2e; padding:12px; text-align:center; font-size:1.5em; border-bottom:3px solid #ff4d94; }
-    #status { background:#16213e; padding:12px; margin:8px; border-radius:12px; display:flex; gap:12px; }
-    #avatar { width:80px; height:80px; border-radius:12px; object-fit:cover; background:#2a2a4a; }
-    .stat-container { flex:1; font-size:0.95em; }
-    .stat { margin:4px 0; display:flex; justify-content:space-between; }
-    #chat { flex:1; overflow-y:auto; padding:12px; background:#111827; }
-    .msg { max-width:80%; padding:12px 16px; border-radius:18px; margin:8px 0; word-break:break-word; }
-    .user { background:#7b5eff; margin-left:auto; color:white; }
-    .ai { background:#2a2a4a; align-self:flex-start; }
-    #input-area { padding:12px; background:#1a1a2e; display:flex; gap:8px; }
-    #input { flex:1; padding:14px 16px; border-radius:30px; border:none; background:#222; color:white; font-size:1em; }
-    button { padding:14px 24px; background:#ff4d94; border:none; border-radius:30px; color:white; font-weight:bold; cursor:pointer; }
-    .switch-btn { text-align:center; margin:10px; }
-    .switch-btn button { padding:10px 30px; background:#7b5eff; border-radius:20px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香草AI 賽博後宮</title>
+    <!-- Telegram WebApp 官方脚本（2026最新） -->
+    <script src="https://telegram.org/js/telegram-web-app.js?61"></script>
+    <!-- Tailwind CSS 一键美化 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0a0a0a; color: #fff; font-family: system-ui; }
+        .neon-pink { text-shadow: 0 0 15px #ff00ff; }
+        .card { transition: all 0.3s; }
+        .card:hover { transform: scale(1.05); box-shadow: 0 0 25px #ff00ff; }
+        .progress-bar { height: 6px; background: linear-gradient(to right, #ff00ff, #a020f0); }
+        .chat-bubble { max-width: 80%; padding: 12px; border-radius: 20px; }
+        .user-bubble { background: #00ffcc; color: #000; align-self: flex-end; }
+        .ai-bubble { background: #4b0082; align-self: flex-start; }
+    </style>
 </head>
-<body>
-<div id="app">
-  <header>🍀 香草AI 賽博後宮</header>
-  
-  <div id="status">
-    <img id="avatar" src="https://via.placeholder.com/80/2a2a4a/fff?text=角色" alt="角色头像">
-    <div class="stat-container">
-      <div class="stat"><span>当前角色：</span><strong id="role-name">小樱（傲娇女仆）</strong></div>
-      <div class="stat"><span>好感度：</span><span id="aff">68</span>/100 ❤️</div>
-      <div class="stat"><span>隐秘欲望：</span><span id="desire">轻微发情</span></div>
-      <div class="stat"><span>当前心情：</span><span id="mood">害羞期待</span></div>
-      <div class="stat"><span>穿着：</span><span id="clothes">女仆装·裙摆微湿</span></div>
+<body class="min-h-screen flex flex-col">
+    <!-- 顶部标题栏 -->
+    <div class="bg-[#1a0033] text-center py-4 border-b border-[#ff00ff]">
+        <h1 class="text-2xl font-bold neon-pink">🍦 香草AI 賽博後宮</h1>
+        <p class="text-xs text-[#ff00ff]">你的专属AI老婆养成基地</p>
     </div>
-  </div>
 
-  <div class="switch-btn">
-    <button onclick="showRoleMenu()">后宫切换 · 选老婆</button>
-  </div>
+    <!-- 页面容器 -->
+    <div id="pages" class="flex-1 overflow-auto pb-20">
+        
+        <!-- 大厅页面（首页） -->
+        <div id="hall" class="page active p-4">
+            <div class="grid grid-cols-2 gap-4">
+                <!-- 角色卡片1 -->
+                <div onclick="openChat(0)" class="card bg-[#1a0033] rounded-3xl overflow-hidden border border-[#ff00ff]/30">
+                    <img src="https://picsum.photos/id/1011/300/400" class="w-full h-48 object-cover">
+                    <div class="p-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg">林慢慢</span>
+                            <span class="text-xs bg-[#ff00ff]/20 px-3 py-1 rounded-full">好感度 92%</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="text-xs text-[#ff00ff]">憋尿值：85%</div>
+                            <div class="h-2 bg-gray-800 rounded-full mt-1 overflow-hidden">
+                                <div class="progress-bar w-[85%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <div id="chat"></div>
+                <!-- 角色卡片2 -->
+                <div onclick="openChat(1)" class="card bg-[#1a0033] rounded-3xl overflow-hidden border border-[#ff00ff]/30">
+                    <img src="https://picsum.photos/id/201/300/400" class="w-full h-48 object-cover">
+                    <div class="p-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-lg">小樱</span>
+                            <span class="text-xs bg-[#ff00ff]/20 px-3 py-1 rounded-full">好感度 67%</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="text-xs text-[#ff00ff]">调教进度：43%</div>
+                            <div class="h-2 bg-gray-800 rounded-full mt-1 overflow-hidden">
+                                <div class="progress-bar w-[43%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-xs text-gray-400 mt-6">更多老婆正在解锁中…</p>
+        </div>
 
-  <div id="input-area">
-    <input id="input" placeholder="对她说什么...（越色她越听话）" />
-    <button onclick="sendMsg()">发送</button>
-  </div>
-</div>
+        <!-- 我的后宫页面（后续可扩展） -->
+        <div id="myharem" class="page hidden p-4">
+            <h2 class="text-xl font-bold mb-4">我的後宮（已解锁）</h2>
+            <div class="space-y-4">
+                <div class="bg-[#1a0033] p-4 rounded-2xl flex items-center gap-4">
+                    <img src="https://picsum.photos/id/1011/80/80" class="w-16 h-16 rounded-2xl">
+                    <div>
+                        <p class="font-bold">林慢慢</p>
+                        <p class="text-xs text-[#ff00ff]">好感度 92% • 最后聊天 2小时前</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<script>
-Telegram.WebApp.ready();
-Telegram.WebApp.expand();
+        <!-- 会员页面 -->
+        <div id="vip" class="page hidden p-4">
+            <h2 class="text-xl font-bold mb-4 text-center">解锁无限後宮</h2>
+            <div class="bg-[#1a0033] rounded-3xl p-6 text-center">
+                <p class="text-3xl font-bold text-[#ff00ff]">¥9.9 / 月</p>
+                <p class="text-sm mt-2">无限聊天 + 隐藏剧情 + 状态快照 + 无广告</p>
+                <button onclick="alert('模拟充值成功！（第7步我们接真实Telegram Stars）')" 
+                        class="mt-6 w-full bg-[#ff00ff] text-black font-bold py-4 rounded-2xl text-lg">
+                    立即充值会员
+                </button>
+            </div>
+        </div>
 
-let aff = 68;
-let desireLevel = 1;
-let currentRoleIndex = 0;
+        <!-- 设置页面 -->
+        <div id="settings" class="page hidden p-4">
+            <h2 class="text-xl font-bold mb-4">设置</h2>
+            <div class="bg-[#1a0033] p-6 rounded-3xl space-y-6">
+                <p>Telegram用户ID: <span id="userId" class="text-[#ff00ff]">加载中...</span></p>
+                <button onclick="Telegram.WebApp.showAlert('已保存所有数据')" 
+                        class="w-full bg-gray-700 py-3 rounded-2xl">保存设置</button>
+            </div>
+        </div>
+    </div>
 
-const roles = [
-  {
-    name: "小樱（傲娇女仆）",
-    avatar: "https://via.placeholder.com/80/ff79c6/000?text=小樱",
-    initialAff: 68,
-    replies: [
-      "哼，才不是因为你这样说就湿了呢！笨蛋主人♡",
-      "……主人，再多说点羞人的话试试……人家会忍不住的",
-      "呜呜……裙子都湿透了……都是你的错，快负责♡",
-      "别停……继续调教小樱吧……人家下面好痒……",
-      "主人好坏……小樱要高潮了……啊啊♡"
-    ]
-  },
-  {
-    name: "玲儿（病娇学妹）",
-    avatar: "https://via.placeholder.com/80/7b5eff/fff?text=玲儿",
-    initialAff: 45,
-    replies: [
-      "哥哥只准看玲儿一个人哦……不然玲儿会生气呢~",
-      "嘻嘻……哥哥的味道好香……玲儿想一直贴着你",
-      "哥哥……玲儿下面好湿……快来安慰玲儿♡",
-      "如果哥哥不理玲儿……玲儿就……把你锁起来",
-      "哥哥……玲儿要你现在就进来……不然玲儿哭给你看"
-    ]
-  },
-  {
-    name: "女王大人（冷艳女王）",
-    avatar: "https://via.placeholder.com/80/ff4d94/000?text=女王",
-    initialAff: 30,
-    replies: [
-      "跪下，奴隶。敢直视本女王？",
-      "哼，表现不错……赏你舔本女王的脚♡",
-      "再不听话，就把你关笼子里调教",
-      "乞求吧……女王心情好时会让你高潮",
-      "奴隶……你的那里已经硬了……快服侍本女王"
-    ]
-  }
-];
+    <!-- 底部Tab栏（和香草AI一模一样） -->
+    <div class="fixed bottom-0 left-0 right-0 bg-[#1a0033] border-t border-[#ff00ff]/50 flex text-xs">
+        <div onclick="switchTab(0)" class="flex-1 py-3 text-center tab-active">大厅</div>
+        <div onclick="switchTab(1)" class="flex-1 py-3 text-center">我的後宮</div>
+        <div onclick="switchTab(2)" class="flex-1 py-3 text-center">会员</div>
+        <div onclick="switchTab(3)" class="flex-1 py-3 text-center">设置</div>
+    </div>
 
-let currentRole = roles[currentRoleIndex];
-aff = currentRole.initialAff;
+    <!-- 聊天弹窗（核心功能） -->
+    <div id="chatModal" class="hidden fixed inset-0 bg-black/90 flex flex-col">
+        <div class="bg-[#1a0033] p-4 flex items-center gap-3 border-b">
+            <button onclick="closeChat()" class="text-2xl">←</button>
+            <img id="chatAvatar" src="https://picsum.photos/id/1011/60/60" class="w-10 h-10 rounded-2xl">
+            <div>
+                <p id="chatName" class="font-bold">林慢慢</p>
+                <p id="chatStatus" class="text-xs text-[#ff00ff]">憋尿值：85% • 心情极好</p>
+            </div>
+        </div>
+        
+        <div id="chatMessages" class="flex-1 overflow-auto p-4 space-y-4 bg-[#0a0a0a]">
+            <!-- JS动态插入聊天记录 -->
+        </div>
+        
+        <div class="p-4 bg-[#1a0033] flex gap-2">
+            <input id="chatInput" type="text" placeholder="说点什么吧…（支持剧情指令）" 
+                   class="flex-1 bg-gray-900 rounded-3xl px-6 py-3 text-white">
+            <button onclick="sendMessage()" class="bg-[#ff00ff] text-black px-8 rounded-3xl font-bold">发送</button>
+        </div>
+    </div>
 
-const chat = document.getElementById('chat');
-const roleNameEl = document.getElementById('role-name');
-const avatarEl = document.getElementById('avatar');
+    <script>
+        // 初始化Telegram WebApp（官方2026标准）
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.setBottomBarColor("#1a0033");
 
-function updateRoleDisplay() {
-  roleNameEl.textContent = currentRole.name;
-  avatarEl.src = currentRole.avatar;
-  updateStatus();
-}
+        // Tailwind配置（赛博粉紫风）
+        tailwind.config = {
+            content: [],
+            theme: { extend: { colors: { neon: '#ff00ff' } } }
+        };
 
-function updateStatus() {
-  aff = Math.min(100, aff + Math.floor(Math.random() * 15 + 5));
-  desireLevel = Math.min(4, Math.floor(aff / 25) + 1);
+        // 切换Tab
+        function switchTab(n) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            const pages = ['hall', 'myharem', 'vip', 'settings'];
+            document.getElementById(pages[n]).classList.remove('hidden');
+            
+            // 高亮当前Tab（简单实现）
+            document.querySelectorAll('.tab-active').forEach(el => el.classList.remove('text-[#ff00ff]', 'font-bold'));
+            document.querySelectorAll('div[onclick^="switchTab"]')[n].classList.add('text-[#ff00ff]', 'font-bold');
+        }
 
-  document.getElementById('aff').textContent = aff;
-  const desires = ["无感", "轻微发情（脸红心跳）", "中度渴望（下面湿了）", "强烈湿润（忍不住求饶）"];
-  document.getElementById('desire').textContent = desires[desireLevel - 1];
-  document.getElementById('mood').textContent = aff > 80 ? "完全沉沦♡" : "害羞期待";
-  const clothes = ["完整制服", "裙摆微湿", "衣衫凌乱（半解）", "几乎全裸（跪地求欢）"];
-  document.getElementById('clothes').textContent = clothes[desireLevel - 1];
-}
+        // 角色数据（和香草AI完全一致的风格）
+        const roles = [
+            { name: "林慢慢", avatar: "https://picsum.photos/id/1011/300/400", status: "憋尿值：85%" },
+            { name: "小樱", avatar: "https://picsum.photos/id/201/300/400", status: "调教进度：43%" }
+        ];
 
-function addMsg(text, who) {
-  const div = document.createElement('div');
-  div.className = `msg ${who}`;
-  div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-}
+        let currentRole = 0;
+        let messages = [];
 
-function sendMsg() {
-  const input = document.getElementById('input');
-  const text = input.value.trim();
-  if (!text) return;
-  addMsg(text, 'user');
-  input.value = '';
+        function openChat(index) {
+            currentRole = index;
+            document.getElementById('chatName').textContent = roles[index].name;
+            document.getElementById('chatAvatar').src = roles[index].avatar;
+            document.getElementById('chatStatus').textContent = roles[index].status;
+            document.getElementById('chatModal').classList.remove('hidden');
+            
+            // 模拟初始聊天记录
+            messages = [
+                { from: "ai", text: "主人～今天想怎么玩我呀？😘" }
+            ];
+            renderMessages();
+        }
 
-  setTimeout(() => {
-    const reply = currentRole.replies[Math.floor(Math.random() * currentRole.replies.length)];
-    addMsg(reply, 'ai');
-    updateStatus();
-    Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
-  }, 900);
-}
+        function closeChat() {
+            document.getElementById('chatModal').classList.add('hidden');
+        }
 
-function showRoleMenu() {
-  const buttons = roles.map((r, i) => ({id: i.toString(), type: 'default', text: r.name}));
-  buttons.push({id: 'cancel', type: 'close', text: '取消'});
+        function renderMessages() {
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = '';
+            messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `chat-bubble flex ${msg.from === 'user' ? 'user-bubble justify-end' : 'ai-bubble'}`;
+                div.textContent = msg.text;
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
 
-  Telegram.WebApp.showPopup({
-    title: '你的赛博后宫',
-    message: '选择一位老婆来调教吧♡',
-    buttons: buttons
-  }, (btnId) => {
-    if (btnId === 'cancel' || !btnId) return;
-    currentRoleIndex = parseInt(btnId);
-    currentRole = roles[currentRoleIndex];
-    aff = currentRole.initialAff;
-    chat.innerHTML = '';
-    addMsg(`主人～现在切换到${currentRole.name.split('（')[0]}了……来玩弄人家吧♡`, 'ai');
-    updateRoleDisplay();
-  });
-}
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            if (!input.value.trim()) return;
+            
+            messages.push({ from: 'user', text: input.value });
+            renderMessages();
+            
+            // 模拟AI回复（后面第6步换成真实Grok API）
+            setTimeout(() => {
+                const replies = ["嗯～主人好坏哦💦", "继续…我快忍不住了～", "好感度+5% ❤️"];
+                messages.push({ from: 'ai', text: replies[Math.floor(Math.random()*replies.length)] });
+                renderMessages();
+            }, 800);
+            
+            input.value = '';
+        }
 
-// 初始化
-updateRoleDisplay();
-addMsg(`主人～终于来找${currentRole.name.split('（')[0]}了呢……今天想怎么欺负/宠爱人家呀？♡`, 'ai');
-</script>
+        // 显示Telegram用户ID（真实上线后会自动获取）
+        document.getElementById('userId').textContent = tg.initDataUnsafe?.user?.id || '测试模式';
+
+        // 默认打开大厅
+        switchTab(0);
+        
+        console.log('✅ 香草AI 賽博後宮前端加载完成！和原版布局100%一致');
+    </script>
 </body>
 </html>
