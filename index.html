@@ -14,20 +14,19 @@
     .tabs { display:flex; background:#1a0033; border-bottom:2px solid #4a0066; }
     .tab { flex:1; padding:12px; text-align:center; cursor:pointer; font-weight:bold; }
     .tab.active { background:#ff6ac8; color:#0f0a1f; }
-    .tags { overflow-x:auto; white-space:nowrap; padding:10px; background:#140028; }
-    .tag { background:#4a0066; color:white; margin:0 5px; padding:6px 12px; border-radius:20px; font-size:0.85em; display:inline-block; cursor:pointer; }
-    .cards { flex:1; overflow-y:auto; padding:10px; display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; }
-    .card { background:#1e0033; border-radius:12px; overflow:hidden; cursor:pointer; border:1px solid #4a0066; }
-    .card img { width:100%; height:180px; object-fit:cover; }
+    .tags { overflow-x:auto; white-space:nowrap; padding:10px 0; background:#140028; -webkit-overflow-scrolling:touch; }
+    .tag { background:#4a0066; color:white; margin:0 6px; padding:6px 14px; border-radius:20px; font-size:0.85em; display:inline-block; cursor:pointer; }
+    .cards { flex:1; overflow-y:auto; padding:10px; display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; height:calc(100vh - 200px); }
+    .card { background:#1e0033; border-radius:12px; overflow:hidden; cursor:pointer; border:1px solid #4a0066; box-shadow:0 4px 8px rgba(0,0,0,0.3); }
+    .card img { width:100%; height:180px; object-fit:cover; loading:lazy; }
     .card-info { padding:8px; }
-    .card-title { font-size:0.95em; margin:0; }
+    .card-title { font-size:0.95em; margin:0; line-height:1.3; }
     .card-tags { font-size:0.8em; color:#c0a0ff; margin-top:4px; }
-    .bottom-nav { position:fixed; bottom:0; width:100%; background:#1a0033; display:flex; border-top:1px solid #4a0066; }
-    .nav-item { flex:1; padding:8px; text-align:center; cursor:pointer; font-size:0.85em; }
-    .nav-item.active { color:#ff6ac8; }
+    .bottom-nav { position:fixed; bottom:0; width:100%; background:#1a0033; display:flex; border-top:1px solid #4a0066; z-index:100; }
+    .nav-item { flex:1; padding:8px 0; text-align:center; cursor:pointer; font-size:0.85em; color:#e0b0ff; }
+    .nav-item.active { color:#ff6ac8; background:#2a004a; }
     #chat-page { display:none; flex-direction:column; height:100%; background:#0a0014; }
     #chat-header { background:#2a004a; padding:10px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #4a0066; }
-    #chat-header img { border-radius:50%; width:44px; height:44px; }
     #chat-box { flex:1; overflow-y:auto; padding:12px; }
     .msg { margin:10px 0; padding:10px 14px; border-radius:18px; max-width:80%; }
     .user-msg { background:#7b5eff; margin-left:auto; color:white; }
@@ -35,7 +34,7 @@
     #input-area { padding:12px; background:#1a0033; display:flex; gap:8px; border-top:1px solid #4a0066; }
     #input { flex:1; padding:12px 16px; border-radius:24px; border:none; background:#330066; color:white; }
     button { background:#ff6ac8; border:none; padding:12px 20px; border-radius:24px; color:white; font-weight:bold; cursor:pointer; }
-    #diamonds { position:absolute; top:10px; right:10px; background:#ff6ac8; color:#0f0a1f; padding:6px 12px; border-radius:20px; font-size:0.9em; }
+    #diamonds { background:#ff6ac8; color:#0f0a1f; padding:6px 12px; border-radius:20px; font-size:0.9em; margin-left:auto; }
   </style>
 </head>
 <body>
@@ -54,27 +53,45 @@
   </div>
 
   <div class="tags">
-    <span class="tag">ntr</span><span class="tag">妈妈</span><span class="tag">萝莉</span><span class="tag">母子</span>
-    <span class="tag">媚黑</span><span class="tag">女s</span><span class="tag">绿帽</span><span class="tag">明星</span>
-    <span class="tag">重口</span><span class="tag">伪娘</span><span class="tag">调教</span><span class="tag">催眠</span>
-    <span class="tag">更多▼</span>
+    <span class="tag">ntr</span>
+    <span class="tag">妈妈</span>
+    <span class="tag">萝莉</span>
+    <span class="tag">母子</span>
+    <span class="tag">媚黑</span>
+    <span class="tag">女s</span>
+    <span class="tag">绿帽</span>
+    <span class="tag">明星</span>
+    <span class="tag">重口</span>
+    <span class="tag">伪娘</span>
+    <span class="tag">调教</span>
+    <span class="tag">催眠</span>
+    <span class="tag" onclick="Telegram.WebApp.showAlert('更多标签：肉便器、熟女、人妻、男娘、足交...')">更多▼</span>
   </div>
 
   <div id="home-page" class="cards">
-    <div class="card" onclick="enterChat('女教师', 'https://via.placeholder.com/300x200/330066/fff?text=女教师')">
-      <img src="https://via.placeholder.com/300x200/330066/fff?text=女教师" alt="">
+    <div class="card" onclick="enterChat('抓着你鸡巴一边给你讲题...', 'https://files.catbox.moe/4h5q3z.jpg')">
+      <img src="https://files.catbox.moe/4h5q3z.jpg" alt="女教师" onerror="this.src='https://via.placeholder.com/300x200?text=加载失败'">
       <div class="card-info">
         <div class="card-title">抓着你鸡巴一边给你讲题一边嘲讽你的英语班主任</div>
         <div class="card-tags">师生 · 禁忌 · 嘲讽 · 手交</div>
       </div>
     </div>
-    <div class="card" onclick="enterChat('调教挑战', 'https://via.placeholder.com/300x200/ff6ac8/000?text=调教')">
-      <img src="https://via.placeholder.com/300x200/ff6ac8/000?text=调教" alt="">
+    <div class="card" onclick="enterChat('调教挑战', 'https://files.catbox.moe/8k2j1p.jpg')">
+      <img src="https://files.catbox.moe/8k2j1p.jpg" alt="调教" onerror="this.src='https://via.placeholder.com/300x200?text=加载失败'">
       <div class="card-info">
         <div class="card-title">调教挑战 - 你是一个三十多岁的已婚男...</div>
         <div class="card-tags">调教 · 母狗 · 服从 · 反差</div>
       </div>
     </div>
+    <!-- 加更多示例角色 -->
+    <div class="card" onclick="enterChat('媚黑调教', 'https://files.catbox.moe/5j9k2m.jpg')">
+      <img src="https://files.catbox.moe/5j9k2m.jpg" alt="">
+      <div class="card-info">
+        <div class="card-title">媚黑调教 - 你的白人老婆被黑人...</div>
+        <div class="card-tags">媚黑 · NTR · 绿帽</div>
+      </div>
+    </div>
+    <!-- 继续加到10张左右，用户就能滚动了 -->
   </div>
 
   <div id="chat-page">
@@ -86,10 +103,6 @@
     <div id="input-area">
       <input id="input" placeholder="对她说点什么...">
       <button onclick="sendMsg()">发送</button>
-    </div>
-    <div style="padding:10px; text-align:center;">
-      <button onclick="simulatePay()">💎 充值解锁无限聊天</button>
-      <button onclick="dailySign()">签到领1000钻石</button>
     </div>
   </div>
 
@@ -106,25 +119,20 @@
 Telegram.WebApp.ready();
 Telegram.WebApp.expand();
 
-const user = Telegram.WebApp.initDataUnsafe.user || { first_name: '主人', id: 'guest' };
-
-// 显示用户名和头像
+const user = Telegram.WebApp.initDataUnsafe.user || { first_name: '主人' };
 document.querySelector('header').innerHTML += `<div class="user-info"><img src="${user.photo_url || 'https://via.placeholder.com/32'}"><span>${user.first_name}</span></div>`;
 
 let diamonds = localStorage.getItem('diamonds') ? parseInt(localStorage.getItem('diamonds')) : 4430;
-
 function updateDiamonds() {
   document.getElementById('diamond-count').textContent = diamonds;
   localStorage.setItem('diamonds', diamonds);
 }
-
 updateDiamonds();
 
 function switchTab(n) {
   document.querySelectorAll('.tab, .nav-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab')[n].classList.add('active');
   document.querySelectorAll('.nav-item')[n].classList.add('active');
-
   document.getElementById('home-page').style.display = n === 0 ? 'grid' : 'none';
   document.getElementById('chat-page').style.display = n === 1 ? 'flex' : 'none';
 }
@@ -134,7 +142,7 @@ function enterChat(title, avatar) {
   document.getElementById('chat-title').textContent = title;
   document.getElementById('chat-avatar').src = avatar;
   document.getElementById('chat-box').innerHTML = '';
-  addMsg(title, "主人～终于来找人家了呢...今天想怎么玩弄我呀？♡");
+  addMsg(title, "主人～终于来找人家了呢...今天想怎么欺负我呀？♡");
 }
 
 function addMsg(sender, text) {
@@ -150,41 +158,8 @@ function sendMsg() {
   input.value = '';
   diamonds -= 5;
   updateDiamonds();
-  Telegram.WebApp.showAlert(`已扣5钻石，剩余 ${diamonds}`);
-  setTimeout(() => {
-    addMsg("角色", "嗯～主人好坏...人家下面都湿了♡ 继续说嘛...");
-  }, 1200);
-}
-
-function dailySign() {
-  if (localStorage.getItem('signedToday') === new Date().toDateString()) {
-    Telegram.WebApp.showAlert("今天已签到啦～明天再来哦");
-    return;
-  }
-  diamonds += 1000;
-  updateDiamonds();
-  localStorage.setItem('signedToday', new Date().toDateString());
-  Telegram.WebApp.showAlert("签到成功！+1000钻石");
-}
-
-function simulatePay() {
-  Telegram.WebApp.showPopup({
-    title: "充值钻石",
-    message: "选择方式解锁无限聊天 + VIP",
-    buttons: [
-      {id:"alipay", type:"default", text:"支付宝"},
-      {id:"wechat", type:"default", text:"微信"},
-      {id:"usdt", type:"default", text:"USDT"},
-      {id:"stars", type:"default", text:"Telegram Stars"},
-      {id:"cancel", type:"close", text:"取消"}
-    ]
-  }, (btn) => {
-    if (btn && btn !== 'cancel') {
-      diamonds += 100000;
-      updateDiamonds();
-      Telegram.WebApp.showAlert("支付成功！+100,000钻石 + VIP已激活");
-    }
-  });
+  Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+  setTimeout(() => addMsg("角色", "嗯～主人好坏...人家下面都湿了♡ 继续说嘛..."), 1200);
 }
 
 // 初始化
