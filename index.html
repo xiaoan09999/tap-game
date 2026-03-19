@@ -1,156 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<title>🍦 香草AI 賽博後宮</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-  body{margin:0;background:#0f0a1f;color:#e0b0ff;font-family:system-ui;}
-  #app{height:100vh;display:flex;flex-direction:column;}
-  header{background:#1a0033;padding:10px;text-align:center;font-size:1.5em;border-bottom:3px solid #ff6ac8;}
-  .topnav{display:flex;justify-content:space-around;background:#2a004a;padding:8px;font-size:0.9em;}
-  .tags{overflow-x:auto;white-space:nowrap;padding:10px;background:#140028;}
-  .tag{background:#4a0066;color:white;margin:0 5px;padding:6px 14px;border-radius:20px;font-size:0.85em;display:inline-block;}
-  .cards{display:flex;flex-wrap:wrap;gap:10px;padding:10px;}
-  .card{width:48%;background:#1e0033;border-radius:12px;overflow:hidden;cursor:pointer;}
-  .card img{width:100%;height:160px;object-fit:cover;}
-  .bottom-tab{position:fixed;bottom:0;width:100%;background:#1a0033;display:flex;justify-content:space-around;padding:8px;}
-  button{background:#ff6ac8;color:white;border:none;padding:10px 16px;border-radius:8px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍦 香草AI 賽博後宮</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { margin:0; background:#0f0a1f; color:#e0b0ff; font-family:system-ui; overflow:hidden; }
+    #app { height:100vh; display:flex; flex-direction:column; }
+    header { background:linear-gradient(#4a0066, #2a004a); padding:12px; text-align:center; font-size:1.4em; border-bottom:3px solid #ff6ac8; display:flex; align-items:center; justify-content:space-between; }
+    .user-info { font-size:0.7em; color:#ff6ac8; display:flex; align-items:center; gap:8px; }
+    .user-info img { width:32px; height:32px; border-radius:50%; }
+    .tabs { display:flex; background:#1a0033; border-bottom:2px solid #4a0066; }
+    .tab { flex:1; padding:12px; text-align:center; cursor:pointer; font-weight:bold; }
+    .tab.active { background:#ff6ac8; color:#0f0a1f; }
+    .tags { overflow-x:auto; white-space:nowrap; padding:10px; background:#140028; }
+    .tag { background:#4a0066; color:white; margin:0 5px; padding:6px 12px; border-radius:20px; font-size:0.85em; display:inline-block; cursor:pointer; }
+    .cards { flex:1; overflow-y:auto; padding:10px; display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; }
+    .card { background:#1e0033; border-radius:12px; overflow:hidden; cursor:pointer; border:1px solid #4a0066; }
+    .card img { width:100%; height:180px; object-fit:cover; }
+    .card-info { padding:8px; }
+    .card-title { font-size:0.95em; margin:0; }
+    .card-tags { font-size:0.8em; color:#c0a0ff; margin-top:4px; }
+    .bottom-nav { position:fixed; bottom:0; width:100%; background:#1a0033; display:flex; border-top:1px solid #4a0066; }
+    .nav-item { flex:1; padding:8px; text-align:center; cursor:pointer; font-size:0.85em; }
+    .nav-item.active { color:#ff6ac8; }
+    #chat-page { display:none; flex-direction:column; height:100%; background:#0a0014; }
+    #chat-header { background:#2a004a; padding:10px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #4a0066; }
+    #chat-header img { border-radius:50%; width:44px; height:44px; }
+    #chat-box { flex:1; overflow-y:auto; padding:12px; }
+    .msg { margin:10px 0; padding:10px 14px; border-radius:18px; max-width:80%; }
+    .user-msg { background:#7b5eff; margin-left:auto; color:white; }
+    .ai-msg { background:#4a0066; }
+    #input-area { padding:12px; background:#1a0033; display:flex; gap:8px; border-top:1px solid #4a0066; }
+    #input { flex:1; padding:12px 16px; border-radius:24px; border:none; background:#330066; color:white; }
+    button { background:#ff6ac8; border:none; padding:12px 20px; border-radius:24px; color:white; font-weight:bold; cursor:pointer; }
+    #diamonds { position:absolute; top:10px; right:10px; background:#ff6ac8; color:#0f0a1f; padding:6px 12px; border-radius:20px; font-size:0.9em; }
+  </style>
 </head>
 <body>
 <div id="app">
-  <header>🍦 香草AI 賽博後宮 <span style="font-size:0.6em">小安</span></header>
-  
-  <!-- 顶部导航 -->
-  <div class="topnav">
-    <span onclick="switchPage(0)">首页</span>
-    <span onclick="switchPage(1)">聊天</span>
-    <span onclick="switchPage(2)">创作</span>
-    <span onclick="switchPage(3)">图库</span>
-    <span onclick="switchPage(4)">我的</span>
+  <header>
+    🍦 香草AI 賽博後宮
+    <div id="diamonds">💎 <span id="diamond-count">4430</span></div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">首页</div>
+    <div class="tab" onclick="switchTab(1)">聊天</div>
+    <div class="tab" onclick="switchTab(2)">创作</div>
+    <div class="tab" onclick="switchTab(3)">图库</div>
+    <div class="tab" onclick="switchTab(4)">我的</div>
   </div>
 
-  <!-- 标签云 -->
   <div class="tags">
-    <span class="tag" onclick="alert('已切换ntr标签')">ntr</span>
-    <span class="tag">妈妈</span><span class="tag">萝莉</span><span class="tag">母子</span>
-    <span class="tag">媚黑</span><span class="tag">女s</span>
-    <button onclick="showMoreTags()">▼ 更多标签</button>
+    <span class="tag">ntr</span><span class="tag">妈妈</span><span class="tag">萝莉</span><span class="tag">母子</span>
+    <span class="tag">媚黑</span><span class="tag">女s</span><span class="tag">绿帽</span><span class="tag">明星</span>
+    <span class="tag">重口</span><span class="tag">伪娘</span><span class="tag">调教</span><span class="tag">催眠</span>
+    <span class="tag">更多▼</span>
   </div>
 
-  <!-- 角色卡片网格（首页） -->
-  <div id="home" class="cards">
-    <div class="card" onclick="enterChat(0)">
+  <div id="home-page" class="cards">
+    <div class="card" onclick="enterChat('女教师', 'https://via.placeholder.com/300x200/330066/fff?text=女教师')">
       <img src="https://via.placeholder.com/300x200/330066/fff?text=女教师" alt="">
-      <div style="padding:8px">抓着你鸡巴一边给你讲题一边嘲讽你的英语班主任</div>
-      <div style="padding:0 8px 8px"><small>师生 · 禁忌 · 嘲讽 · 手交</small></div>
+      <div class="card-info">
+        <div class="card-title">抓着你鸡巴一边给你讲题一边嘲讽你的英语班主任</div>
+        <div class="card-tags">师生 · 禁忌 · 嘲讽 · 手交</div>
+      </div>
     </div>
-    <div class="card" onclick="enterChat(1)">
+    <div class="card" onclick="enterChat('调教挑战', 'https://via.placeholder.com/300x200/ff6ac8/000?text=调教')">
       <img src="https://via.placeholder.com/300x200/ff6ac8/000?text=调教" alt="">
-      <div style="padding:8px">调教挑战 - 你是一个三十多岁的已婚男...</div>
+      <div class="card-info">
+        <div class="card-title">调教挑战 - 你是一个三十多岁的已婚男...</div>
+        <div class="card-tags">调教 · 母狗 · 服从 · 反差</div>
+      </div>
     </div>
-    <!-- 可继续加更多卡片 -->
   </div>
 
-  <!-- 聊天界面（默认隐藏） -->
-  <div id="chatPage" style="display:none;flex-direction:column;height:100%;background:#0a0014;">
-    <div style="padding:10px;background:#2a004a;display:flex;align-items:center;gap:10px;">
-      <img src="https://via.placeholder.com/50" style="border-radius:50%" width="50">
-      <div><b>抓着你鸡巴一边给你讲题...</b><br>刘鑫冉老师</div>
+  <div id="chat-page">
+    <div id="chat-header">
+      <img id="chat-avatar" src="" alt="">
+      <div id="chat-title"></div>
     </div>
-    <div id="chatBox" style="flex:1;overflow-y:auto;padding:10px;"></div>
-    <input id="msgInput" placeholder="对她说..." style="margin:10px;border-radius:30px;padding:12px;">
-    <button onclick="sendChat()" style="margin:10px;">发送 + 扣5钻石</button>
-    <button onclick="showModelMenu()">⚙ 模型设定（重新生成/剧情选项）</button>
-    <button onclick="paySuccess()">💎 充值解锁无限（模拟）</button>
+    <div id="chat-box"></div>
+    <div id="input-area">
+      <input id="input" placeholder="对她说点什么...">
+      <button onclick="sendMsg()">发送</button>
+    </div>
+    <div style="padding:10px; text-align:center;">
+      <button onclick="simulatePay()">💎 充值解锁无限聊天</button>
+      <button onclick="dailySign()">签到领1000钻石</button>
+    </div>
   </div>
 
-  <div class="bottom-tab">
-    <button onclick="switchPage(0)">🏠 首页</button>
-    <button onclick="switchPage(1)">💬 聊天</button>
-    <button onclick="switchPage(2)">✍ 创作</button>
-    <button onclick="switchPage(3)">📸 图库</button>
-    <button onclick="switchPage(4)">👤 我的</button>
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab(0)">🏠 首页</div>
+    <div class="nav-item" onclick="switchTab(1)">💬 聊天</div>
+    <div class="nav-item" onclick="switchTab(2)">✍ 创作</div>
+    <div class="nav-item" onclick="switchTab(3)">📸 图库</div>
+    <div class="nav-item" onclick="switchTab(4)">👤 我的</div>
   </div>
 </div>
 
 <script>
-Telegram.WebApp.ready(); Telegram.WebApp.expand();
+Telegram.WebApp.ready();
+Telegram.WebApp.expand();
 
-let diamonds = 4430;
-let currentPage = 0;
+const user = Telegram.WebApp.initDataUnsafe.user || { first_name: '主人', id: 'guest' };
 
-function switchPage(n){
-  currentPage = n;
-  if(n===1){
-    document.getElementById('home').style.display='none';
-    document.getElementById('chatPage').style.display='flex';
-    addChatMsg("刘鑫冉老师","下课铃响了...教室里只剩我们两个人...");
-  }else{
-    document.getElementById('home').style.display='block';
-    document.getElementById('chatPage').style.display='none';
-  }
+// 显示用户名和头像
+document.querySelector('header').innerHTML += `<div class="user-info"><img src="${user.photo_url || 'https://via.placeholder.com/32'}"><span>${user.first_name}</span></div>`;
+
+let diamonds = localStorage.getItem('diamonds') ? parseInt(localStorage.getItem('diamonds')) : 4430;
+
+function updateDiamonds() {
+  document.getElementById('diamond-count').textContent = diamonds;
+  localStorage.setItem('diamonds', diamonds);
 }
 
-function enterChat(i){
-  switchPage(1);
+updateDiamonds();
+
+function switchTab(n) {
+  document.querySelectorAll('.tab, .nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab')[n].classList.add('active');
+  document.querySelectorAll('.nav-item')[n].classList.add('active');
+
+  document.getElementById('home-page').style.display = n === 0 ? 'grid' : 'none';
+  document.getElementById('chat-page').style.display = n === 1 ? 'flex' : 'none';
 }
 
-function addChatMsg(name,text){
-  const box = document.getElementById('chatBox');
-  box.innerHTML += `<div style="margin:10px;background:#4a0066;padding:10px;border-radius:10px;">${name}：${text}</div>`;
+function enterChat(title, avatar) {
+  switchTab(1);
+  document.getElementById('chat-title').textContent = title;
+  document.getElementById('chat-avatar').src = avatar;
+  document.getElementById('chat-box').innerHTML = '';
+  addMsg(title, "主人～终于来找人家了呢...今天想怎么玩弄我呀？♡");
+}
+
+function addMsg(sender, text) {
+  const box = document.getElementById('chat-box');
+  box.innerHTML += `<div class="msg ${sender === user.first_name ? 'user-msg' : 'ai-msg'}">${text}</div>`;
   box.scrollTop = box.scrollHeight;
 }
 
-function sendChat(){
-  const input = document.getElementById('msgInput');
-  if(input.value){
-    addChatMsg("你",input.value);
-    diamonds -= 5;
-    Telegram.WebApp.showAlert(`已扣5钻石！剩余 ${diamonds}`);
-    input.value = '';
-    // 模拟回复
-    setTimeout(()=>addChatMsg("老师","哼～学生这么大胆？老师要惩罚你了♡"),800);
+function sendMsg() {
+  const input = document.getElementById('input');
+  if (!input.value) return;
+  addMsg(user.first_name, input.value);
+  input.value = '';
+  diamonds -= 5;
+  updateDiamonds();
+  Telegram.WebApp.showAlert(`已扣5钻石，剩余 ${diamonds}`);
+  setTimeout(() => {
+    addMsg("角色", "嗯～主人好坏...人家下面都湿了♡ 继续说嘛...");
+  }, 1200);
+}
+
+function dailySign() {
+  if (localStorage.getItem('signedToday') === new Date().toDateString()) {
+    Telegram.WebApp.showAlert("今天已签到啦～明天再来哦");
+    return;
   }
+  diamonds += 1000;
+  updateDiamonds();
+  localStorage.setItem('signedToday', new Date().toDateString());
+  Telegram.WebApp.showAlert("签到成功！+1000钻石");
 }
 
-function showModelMenu(){
+function simulatePay() {
   Telegram.WebApp.showPopup({
-    title:"模型设定",
-    message:"选择操作",
-    buttons:[
-      {id:"1",text:"重新生成"},
-      {id:"2",text:"修改并重新生成"},
-      {id:"3",text:"生成剧情选项"},
-      {id:"4",text:"重置对话"}
+    title: "充值钻石",
+    message: "选择方式解锁无限聊天 + VIP",
+    buttons: [
+      {id:"alipay", type:"default", text:"支付宝"},
+      {id:"wechat", type:"default", text:"微信"},
+      {id:"usdt", type:"default", text:"USDT"},
+      {id:"stars", type:"default", text:"Telegram Stars"},
+      {id:"cancel", type:"close", text:"取消"}
     ]
-  }, id=> { if(id) alert("已执行："+id); });
-}
-
-function showMoreTags(){
-  Telegram.WebApp.showAlert("已展开全部标签（绿帽、明星、重口、伪娘...共50+）");
-}
-
-function paySuccess(){
-  Telegram.WebApp.showPopup({
-    title:"选择支付方式",
-    message:"$19.99 月度会员",
-    buttons:[
-      {id:"alipay",text:"支付宝"},
-      {id:"wechat",text:"微信"},
-      {id:"usdt",text:"USDT"},
-      {id:"stars",text:"Telegram Stars"}
-    ]
-  }, id=>{
-    Telegram.WebApp.showAlert("✅ 支付成功！已解锁VIP + 无限聊天 + 全部角色");
-    diamonds += 220000;
+  }, (btn) => {
+    if (btn && btn !== 'cancel') {
+      diamonds += 100000;
+      updateDiamonds();
+      Telegram.WebApp.showAlert("支付成功！+100,000钻石 + VIP已激活");
+    }
   });
 }
 
-// 开场
-addChatMsg("系统","欢迎回来小安～ 今日签到 +1000钻石 已到账");
-switchPage(0);
+// 初始化
+switchTab(0);
 </script>
 </body>
 </html>
